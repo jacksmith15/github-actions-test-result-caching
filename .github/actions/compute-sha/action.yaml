@@ -1,0 +1,32 @@
+name: Compute sha
+description: Computes sha all files tracked by git relevant to given sub-project.
+branding:
+  icon: hash
+  color: purple
+
+inputs:
+  path:
+    description:
+      The path of the sub-project relative to the repository root.
+    required: true
+
+outputs:
+  sha:
+    description: |
+      A JSON-formatted list of packages which were modified.
+    value: ${{ steps.compute.outputs.sha }}
+
+runs:
+  using: composite
+  steps:
+    - id: compute
+      name: Compute sha
+      shell: bash
+      run: |
+        sha256sum <(
+          git ls-files \
+            -- ${{ inputs.path }} .github \
+            | sort | uniq | xargs sha256sum
+        ) | cut -f 1 -d ' ' > sha256
+        echo "Computed sha256 for ${{ matrix.package }}: $(cat sha256)"
+        echo "sha=$(cat sha256)" >> "${GITHUB_OUTPUT}"

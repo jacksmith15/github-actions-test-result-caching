@@ -1,0 +1,20 @@
+name: Detect packages
+description: Detects which packages were modified by the commit/PR.
+branding:
+  icon: git-branch
+  color: purple
+
+outputs:
+  packages:
+    description: |
+      A JSON-formatted list of packages which were modified.
+    value: ${{ steps.detect.outputs.packages }}
+
+runs:
+  using: composite
+  steps:
+    - id: detect
+      name: Detect packages
+      shell: bash
+      run: |
+        python ${GITHUB_ACTION_PATH}/action.py
