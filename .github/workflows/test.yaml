@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: job-cache
         name: Check job cache
-        uses: jacksmith15/job-cache-action@4290d2b1bd0fc0d7aab01e21c3c6c8475ed57041
+        uses: jacksmith15/job-cache-action@v1
         with:
           prefix: ${{ matrix.package }}/
           paths: 'packages/${{ matrix.package }} .github :!*.md'
