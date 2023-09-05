@@ -43,42 +43,26 @@ jobs:
         working-directory: packages/${{ matrix.package }}
     steps:
       - uses: actions/checkout@v3
+      - id: job-cache
+        name: Check job cache
+        uses: jacksmith15/job-cache-action@4290d2b1bd0fc0d7aab01e21c3c6c8475ed57041
+        with:
+          prefix: ${{ matrix.package }}/
+          paths: 'packages/${{ matrix.package }} .github :!*.md'
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           architecture: 'x64'
-      - id: sha
-        name: Compute sha
-        uses: ./.github/actions/compute-sha
-        with:
-          path: packages/${{ matrix.package }}
-      - id: check-cache
-        uses: actions/cache/restore@v3
-        with:
-          key: ${{ matrix.package }}/${{ steps.sha.outputs.sha }}
-          lookup-only: true
-          path: packages/${{ matrix.package }}/blank.txt
       - name: Install poetry
-        if: steps.check-cache.outputs.cache-hit != 'true'
+        if: steps.job-cache.outputs.passed != 'true'
         run: |
           pip install --upgrade pip
           pip install poetry==1.6.1
       - name: Install dependencies
-        if: steps.check-cache.outputs.cache-hit != 'true'
+        if: steps.job-cache.outputs.passed != 'true'
         run: |
           poetry install
       - name: Run tests
-        if: steps.check-cache.outputs.cache-hit != 'true'
+        if: steps.job-cache.outputs.passed != 'true'
         run: |
           poetry run inv verify
-      - name: Create cache dummy
-        if: steps.check-cache.outputs.cache-hit != 'true'
-        run: |
-          touch blank.txt
-      - id: save-cache
-        if: steps.check-cache.outputs.cache-hit != 'true'
-        name: Cache test result
-        uses: actions/cache/save@v3
-        with:
-          key: ${{ matrix.package }}/${{ steps.sha.outputs.sha }}
-          path: packages/${{ matrix.package }}/blank.txt
