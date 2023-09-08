@@ -15,3 +15,7 @@ def product(a: int, b: int) -> int:
 
 def divide(a: int, b: int) -> float:
     return a / b
+
+
+def exponent(a: int, b: int) -> int:
+    return a**b
