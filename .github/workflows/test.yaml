@@ -41,8 +41,6 @@ jobs:
     defaults:
       run:
         working-directory: packages/${{ matrix.package }}
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v3
       - id: job-cache
@@ -51,6 +49,7 @@ jobs:
         with:
           prefix: ${{ matrix.package }}/
           paths: 'packages/${{ matrix.package }} .github :!*.md'
+          global: 'false'
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
