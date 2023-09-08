@@ -14,4 +14,4 @@ def product(a: int, b: int) -> int:
 
 
 def divide(a: int, b: int) -> float:
-    return a / b + 1
+    return a / b
